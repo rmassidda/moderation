@@ -1,4 +1,4 @@
-tracker = {}
+// Load data
 browser.storage.sync.get(['tracker']).then( function(result) {
   tracker = (result.tracker==undefined) ? {} : result.tracker;
 }, (e) => console.log ( e ));
@@ -32,13 +32,10 @@ function logTabs(tabs) {
   console.log ( tracker );
 }
 
-function onError(error) {
-}
-
 setInterval ( () => {
   // TODO: check if date changed and clear the tracker dates
   // Update active tabs timing
-  browser.tabs.query({active: true}).then ( logTabs, onError )
+  browser.tabs.query({active: true}).then ( logTabs, (e) => console.log ( e ) );
   // Persistent save data
   browser.storage.sync.set({'tracker':tracker});
 }, 1000 );
