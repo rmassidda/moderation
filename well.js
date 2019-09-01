@@ -1,4 +1,8 @@
 tracker = {}
+browser.storage.sync.get(['tracker']).then( function(result) {
+  tracker = (result.tracker==undefined) ? {} : result.tracker;
+}, (e) => console.log ( e ));
+
 
 // https://stackoverflow.com/questions/8498592/extract-hostname-name-from-string
 function extractHostname(url) {
@@ -25,12 +29,16 @@ function logTabs(tabs) {
     let host = extractHostname(tab.url);
     tracker[host] = ( tracker[host] == undefined ) ? 0 : tracker[host] + 1;
   }
-  console.clear ();
   console.log ( tracker );
 }
 
 function onError(error) {
-  console.log(`Error: ${error}`);
 }
 
-setInterval ( () => browser.tabs.query({active: true}).then ( logTabs, onError ), 1000 );
+setInterval ( () => {
+  // TODO: check if date changed and clear the tracker dates
+  // Update active tabs timing
+  browser.tabs.query({active: true}).then ( logTabs, onError )
+  // Persistent save data
+  browser.storage.sync.set({'tracker':tracker});
+}, 1000 );

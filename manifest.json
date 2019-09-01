@@ -1,8 +1,14 @@
 {
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "timer@rmassidda.it",
+      "strict_min_version": "42.0"
+    }
+  },
   "manifest_version": 2,
   "name": "Test",
   "version": "0.1",
-  "permissions": ["tabs"],
+  "permissions": ["tabs","storage"],
   "background": {
       "scripts": ["well.js"]
   }
