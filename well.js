@@ -1,27 +1,36 @@
-activatedTabs = []
+tracker = {}
 
-function handleActivated ( e ) {
-  curr = {
-    window: e.windowId,
-    tab: e.tabId
+// https://stackoverflow.com/questions/8498592/extract-hostname-name-from-string
+function extractHostname(url) {
+  let hostname;
+
+  //find & remove protocol (http, ftp, etc.) and get hostname
+  if (url.indexOf("//") > -1) {
+    hostname = url.split('/')[2];
   }
-  prev = {
-    window: e.windowId,
-    tab: e.previousTabId
+  else {
+    hostname = url.split('/')[0];
   }
-  activatedTabs.push ( curr );
-  activatedTabs = activatedTabs.filter ( t => t.window != prev.window || t.tab != prev.tab );
+
+  //find & remove port number
+  hostname = hostname.split(':')[0];
+  //find & remove "?"
+  hostname = hostname.split('?')[0];
+
+  return hostname;
 }
 
-function handleRemoved ( tabId, removeInfo ) {
-  prev = {
-    window: tabId,
-    tab: removeInfo.windowId
+function logTabs(tabs) {
+  for (let tab of tabs) {
+    let host = extractHostname(tab.url);
+    tracker[host] = ( tracker[host] == undefined ) ? 0 : tracker[host] + 1;
   }
-  activatedTabs = activatedTabs.filter ( t => t.window != prev.window || t.tab != prev.tab );
+  console.clear ();
+  console.log ( tracker );
 }
 
-browser.tabs.onActivated.addListener ( handleActivated );
-browser.tabs.onRemoved.addListener ( handleRemoved );
+function onError(error) {
+  console.log(`Error: ${error}`);
+}
 
-setInterval ( () => console.log ( activatedTabs ), 1000 );
+setInterval ( () => browser.tabs.query({active: true}).then ( logTabs, onError ), 1000 );
