@@ -18,6 +18,20 @@ function extractHostname(url) {
   return hostname;
 }
 
+function redirect(requestDetails) {
+  var getting = browser.storage.sync.get(['limit']).then ( (result) => {
+    limit = (result.limit==undefined) ? [] : result.limit;
+  }, (e)=>console.log(e));
+  for ( var l of limit ) {
+    // TODO: better matching function
+    if ( requestDetails.url.includes(l.host) && tracker[extractHostname(requestDetails.url)] > l.time ) {
+      return {
+        redirectUrl: browser.extension.getURL("blocked.html")
+      };
+    }
+  }
+}
+
 function updateTimes(tabs) {
   for (let tab of tabs) {
     let host = extractHostname(tab.url);
@@ -28,42 +42,24 @@ function updateTimes(tabs) {
 // Load data
 browser.storage.sync.get(['tracker','day']).then( function(result) {
   tracker = (result.tracker==undefined) ? {} : result.tracker;
+  limit = (result.limit==undefined) ? [] : result.limit;
   day = (result.day==undefined) ? (new Date().getDate()) : result.day;
-}, (e) => console.log ( e ));
-
-setInterval ( () => {
-  // Restart counter at new date
-  curr_day = new Date().getDate();
-  if ( curr_day != day ) {
-    browser.storage.sync.remove ( ['tracker'] ).then ( ()=>console.log('New day'), (e)=>console.log(e));
-    tracker = {};
-    day = curr_day;
-  }
-  // Update active tabs timing
-  browser.tabs.query({active: true}).then ( updateTimes, (e) => console.log ( e ) );
-  // Persistent save data
-  browser.storage.sync.set({'tracker':tracker});
-}, 1000 );
-
-function redirect(requestDetails) {
-  var getting = browser.storage.sync.get(['limit']).then ( (result) => {
-    limit = (result.limit==undefined) ? [] : result.limit;
-  }, (e)=>console.log(e));
-  for ( var l of limit ) {
-    // TODO: better matching function
-    if ( requestDetails.url.includes(l.host) && tracker[l.host] > l.time ) {
-      console.log ( `${l.host} has been blocked ${tracker[l.host]} > ${l.time}`);
-      return {
-        redirectUrl: browser.extension.getURL("blocked.html")
-      };
+  browser.webRequest.onBeforeRequest.addListener(
+    redirect,
+    {urls: ["<all_urls>"],types:['main_frame']},
+    ["blocking"]
+  );
+  setInterval ( () => {
+    // Restart counter at new date
+    curr_day = new Date().getDate();
+    if ( curr_day != day ) {
+      browser.storage.sync.remove ( ['tracker'] ).then ( ()=>console.log('New day'), (e)=>console.log(e));
+      tracker = {};
+      day = curr_day;
     }
-  }
-  return {}
-}
-
-// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
-browser.webRequest.onBeforeRequest.addListener(
-  redirect,
-  {urls: ["<all_urls>"],types:['main_frame']},
-  ["blocking"]
-);
+    // Update active tabs timing
+    browser.tabs.query({active: true}).then ( updateTimes, (e) => console.log ( e ) );
+    // Persistent save data
+    browser.storage.sync.set({'tracker':tracker});
+  }, 1000 );
+}, (e) => console.log ( e ));
