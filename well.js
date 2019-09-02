@@ -27,8 +27,9 @@ function logTabs(tabs) {
 }
 
 // Load data
-browser.storage.sync.get(['tracker']).then( function(result) {
+browser.storage.sync.get(['tracker','day']).then( function(result) {
   tracker = (result.tracker==undefined) ? {} : result.tracker;
+  day = (result.day==undefined) ? (new Date().getDate()) : result.day;
 }, (e) => console.log ( e ));
 
 // TODO: limit settings
@@ -38,7 +39,13 @@ limit = [
 ]
 
 setInterval ( () => {
-  // TODO: check if date changed and clear the tracker dates
+  // Restart counter at new date
+  curr_day = new Date().getDate();
+  if ( curr_day != day ) {
+    browser.storage.sync.remove ( ['tracker'] ).then ( ()=>console.log('New day'), (e)=>console.log(e));
+    tracker = {};
+    day = curr_day;
+  }
   // Update active tabs timing
   browser.tabs.query({active: true}).then ( logTabs, (e) => console.log ( e ) );
   // Persistent save data
