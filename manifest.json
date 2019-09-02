@@ -9,6 +9,9 @@
   "name": "Test",
   "version": "0.1",
   "permissions": ["tabs","storage","webRequest","webRequestBlocking","<all_urls>"],
+  "options_ui": {
+    "page": "options.html"
+  },
   "web_accessible_resources": ["blocked.html"],
   "background": {
       "scripts": ["well.js"]

@@ -18,12 +18,11 @@ function extractHostname(url) {
   return hostname;
 }
 
-function logTabs(tabs) {
+function updateTimes(tabs) {
   for (let tab of tabs) {
     let host = extractHostname(tab.url);
     tracker[host] = ( tracker[host] == undefined ) ? 0 : tracker[host] + 1;
   }
-  // console.log ( tracker );
 }
 
 // Load data
@@ -31,11 +30,6 @@ browser.storage.sync.get(['tracker','day']).then( function(result) {
   tracker = (result.tracker==undefined) ? {} : result.tracker;
   day = (result.day==undefined) ? (new Date().getDate()) : result.day;
 }, (e) => console.log ( e ));
-
-// TODO: limit settings
-limit = [
-  {host:"rmassidda.it",time:0}
-]
 
 setInterval ( () => {
   // Restart counter at new date
@@ -46,15 +40,19 @@ setInterval ( () => {
     day = curr_day;
   }
   // Update active tabs timing
-  browser.tabs.query({active: true}).then ( logTabs, (e) => console.log ( e ) );
+  browser.tabs.query({active: true}).then ( updateTimes, (e) => console.log ( e ) );
   // Persistent save data
   browser.storage.sync.set({'tracker':tracker});
 }, 1000 );
 
 function redirect(requestDetails) {
+  var getting = browser.storage.sync.get(['limit']).then ( (result) => {
+    limit = (result.limit==undefined) ? [] : result.limit;
+  }, (e)=>console.log(e));
   for ( var l of limit ) {
     // TODO: better matching function
     if ( requestDetails.url.includes(l.host) && tracker[l.host] > l.time ) {
+      console.log ( `${l.host} has been blocked ${tracker[l.host]} > ${l.time}`);
       return {
         redirectUrl: browser.extension.getURL("blocked.html")
       };
