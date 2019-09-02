@@ -34,8 +34,7 @@ browser.storage.sync.get(['tracker','day']).then( function(result) {
 
 // TODO: limit settings
 limit = [
-  {host:"stackoverflow.com",time:10},
-  {host:"duckduckgo.com",time:80}
+  {host:"rmassidda.it",time:0}
 ]
 
 setInterval ( () => {
@@ -57,8 +56,7 @@ function redirect(requestDetails) {
     // TODO: better matching function
     if ( requestDetails.url.includes(l.host) && tracker[l.host] > l.time ) {
       return {
-        // TODO: redirect to local extension page
-        redirectUrl: "https://38.media.tumblr.com/tumblr_ldbj01lZiP1qe0eclo1_500.gif"
+        redirectUrl: browser.extension.getURL("blocked.html")
       };
     }
   }
