@@ -1,16 +1,19 @@
 {
   "browser_specific_settings": {
     "gecko": {
-      "id": "timer@rmassidda.it",
+      "id": "moderation@rmassidda.it",
       "strict_min_version": "42.0"
     }
   },
   "manifest_version": 2,
-  "name": "Test",
+  "name": "Moderation",
   "version": "0.1",
   "permissions": ["tabs","storage","webRequest","webRequestBlocking","<all_urls>"],
   "options_ui": {
     "page": "options.html"
+  },
+  "icons": {
+    "48": "icons/moderation-48.png"
   },
   "web_accessible_resources": ["blocked.html"],
   "background": {
