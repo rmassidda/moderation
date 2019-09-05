@@ -1,1 +1,1 @@
-zip -r -FS moderation.xpi * --exclude *.git* *.sh
+cd src && zip -r -FS moderation.xpi *
