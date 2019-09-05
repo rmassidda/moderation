@@ -1,0 +1,82 @@
+{
+  "settings": {
+    "size": {
+      "width": 600,
+      "height": 270
+    },
+    "crest": false
+  },
+  "layers": [
+    [
+      {
+        "type": "arc_c",
+        "vertices": [
+          {
+            "x": 300,
+            "y": 165
+          },
+          {
+            "x": 165,
+            "y": 60
+          },
+          {
+            "x": 210,
+            "y": 165
+          },
+          {
+            "x": 210,
+            "y": 165
+          }
+        ]
+      },
+      {
+        "type": "arc_r",
+        "vertices": [
+          {
+            "x": 210,
+            "y": 165
+          },
+          {
+            "x": 255,
+            "y": 225
+          }
+        ]
+      },
+      {
+        "type": "close",
+        "vertices": []
+      }
+    ],
+    [],
+    []
+  ],
+  "styles": [
+    {
+      "thickness": 10,
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round",
+      "color": "#000",
+      "fill": "none",
+      "mirror_style": 1,
+      "transform": "rotate(45)"
+    },
+    {
+      "thickness": 10,
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round",
+      "color": "#999",
+      "fill": "none",
+      "mirror_style": 0,
+      "transform": "rotate(45)"
+    },
+    {
+      "thickness": 10,
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round",
+      "color": "#ccc",
+      "fill": "none",
+      "mirror_style": 0,
+      "transform": "rotate(45)"
+    }
+  ]
+}

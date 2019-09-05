@@ -1,3 +1,8 @@
+// Global state
+var tracker = {},
+    limit   = [],
+    day     = 0;
+
 // https://stackoverflow.com/questions/8498592/extract-hostname-name-from-string
 function extractHostname(url) {
   let hostname;
@@ -18,13 +23,22 @@ function extractHostname(url) {
   return hostname;
 }
 
+/*
+ * Check if the request is directed to a
+ * domain limited by the user and if it
+ * doesn't have any remaining time.
+ */
 function redirect(requestDetails) {
-  var getting = browser.storage.sync.get(['limit']).then ( (result) => {
+  // Update limits
+  browser.storage.sync.get(['limit']).then ( (result) => {
     limit = (result.limit==undefined) ? [] : result.limit;
   }, (e)=>console.log(e));
+
+  // Match
   for ( var l of limit ) {
     // TODO: better matching function
-    if ( requestDetails.url.includes(l.host) && tracker[extractHostname(requestDetails.url)] > l.time ) {
+    let reqHost = extractHostname ( requestDetails.url );
+    if ( reqHost.includes(l.host) && tracker[reqHost] > l.time ) {
       return {
         redirectUrl: browser.extension.getURL("blocked.html")
       };
@@ -32,6 +46,10 @@ function redirect(requestDetails) {
   }
 }
 
+/*
+ * Update of one second the time
+ * used by each active tab
+ */
 function updateTimes(tabs) {
   for (let tab of tabs) {
     let host = extractHostname(tab.url);
@@ -39,27 +57,27 @@ function updateTimes(tabs) {
   }
 }
 
-// Load data
-browser.storage.sync.get(['tracker','day']).then( function(result) {
+// Get current data
+browser.storage.sync.get(['tracker','day','limit']).then( function(result) {
+  // Initialize data
   tracker = (result.tracker==undefined) ? {} : result.tracker;
   limit = (result.limit==undefined) ? [] : result.limit;
   day = (result.day==undefined) ? (new Date().getDate()) : result.day;
-  browser.webRequest.onBeforeRequest.addListener(
-    redirect,
-    {urls: ["<all_urls>"],types:['main_frame']},
-    ["blocking"]
-  );
+
+  // Update status each second
   setInterval ( () => {
     // Restart counter at new date
-    curr_day = new Date().getDate();
-    if ( curr_day != day ) {
-      browser.storage.sync.remove ( ['tracker'] ).then ( ()=>console.log('New day'), (e)=>console.log(e));
-      tracker = {};
-      day = curr_day;
-    }
+    tracker = ( (new Date().getDate()) != day ) ? {} : tracker;
     // Update active tabs timing
     browser.tabs.query({active: true}).then ( updateTimes, (e) => console.log ( e ) );
     // Persistent save data
     browser.storage.sync.set({'tracker':tracker});
   }, 1000 );
+
+  // Monitor web requests
+  browser.webRequest.onBeforeRequest.addListener(
+    redirect,
+    {urls: ["<all_urls>"],types:['main_frame']},
+    ["blocking"]
+  );
 }, (e) => console.log ( e ));

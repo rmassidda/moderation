@@ -6,17 +6,18 @@
     }
   },
   "manifest_version": 2,
-  "name": "Moderation",
-  "version": "0.1",
+  "name": "moderation",
+  "version": "0.1.1",
   "permissions": ["tabs","storage","webRequest","webRequestBlocking","<all_urls>"],
   "options_ui": {
     "page": "options.html"
   },
   "icons": {
-    "48": "icons/moderation-48.png"
+    "48": "icons/moderation-48.png",
+    "32": "icons/moderation-32.png"
   },
   "web_accessible_resources": ["blocked.html"],
   "background": {
-      "scripts": ["well.js"]
+      "scripts": ["moderation.js"]
   }
 }
