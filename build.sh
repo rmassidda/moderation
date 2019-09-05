@@ -1,1 +1,1 @@
-cd src && zip -r -FS moderation.xpi *
+cd src && zip -r -FS ../moderation.xpi *
