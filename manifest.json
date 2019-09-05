@@ -17,6 +17,6 @@
   },
   "web_accessible_resources": ["blocked.html"],
   "background": {
-      "scripts": ["well.js"]
+      "scripts": ["moderation.js"]
   }
 }
