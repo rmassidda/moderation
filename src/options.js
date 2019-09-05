@@ -3,8 +3,10 @@ function saveOptions(e) {
   let config = document.getElementById("config").value.split('\n');
   let limit = [];
   for ( c of config ) {
-    val = c.split(',');
-    limit.push ( {host:val[0],time:val[1]} );
+    if ( c.includes(',') ) {
+      val = c.split(',');
+      limit.push ( {host:val[0],time:val[1]} );
+    }
   }
   browser.storage.sync.set({'limit':limit});
 }
