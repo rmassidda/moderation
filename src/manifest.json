@@ -7,12 +7,13 @@
   },
   "manifest_version": 2,
   "name": "moderation",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "permissions": ["tabs","storage","webRequest","webRequestBlocking","<all_urls>"],
   "options_ui": {
     "page": "options.html"
   },
   "icons": {
+    "128": "icons/moderation-128.png",
     "48": "icons/moderation-48.png",
     "32": "icons/moderation-32.png"
   },
