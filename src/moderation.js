@@ -1,7 +1,7 @@
 // Global state
 var tracker = {},
     limit   = [],
-    day     = 0;
+    date     = 0;
 
 // https://stackoverflow.com/questions/8498592/extract-hostname-name-from-string
 function extractHostname(url) {
@@ -58,20 +58,22 @@ function updateTimes(tabs) {
 }
 
 // Get current data
-browser.storage.sync.get(['tracker','day','limit']).then( function(result) {
+browser.storage.sync.get(['tracker','date','limit']).then( function(result) {
   // Initialize data
   tracker = (result.tracker==undefined) ? {} : result.tracker;
   limit = (result.limit==undefined) ? [] : result.limit;
-  day = (result.day==undefined) ? (new Date().getDate()) : result.day;
+  date = (result.date==undefined) ? (new Date().getDate()) : result.date;
 
   // Update status each second
   setInterval ( () => {
     // Restart counter at new date
-    tracker = ( (new Date().getDate()) != day ) ? {} : tracker;
+    let curr_date = new Date().getDate();
+    tracker = ( curr_date != date ) ? {} : tracker;
+    date = curr_date;
     // Update active tabs timing
     browser.tabs.query({active: true}).then ( updateTimes, (e) => console.log ( e ) );
     // Persistent save data
-    browser.storage.sync.set({'tracker':tracker});
+    browser.storage.sync.set({'tracker':tracker,'date':date});
   }, 1000 );
 
   // Monitor web requests
