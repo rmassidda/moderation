@@ -7,7 +7,7 @@
   },
   "manifest_version": 2,
   "name": "moderation",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "permissions": ["tabs","storage","webRequest","webRequestBlocking","<all_urls>"],
   "options_ui": {
     "page": "options.html"
